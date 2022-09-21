@@ -13,7 +13,7 @@ class Dataman_Logic:
         #self.data = myData.Datman_Data()
         pass
     
-    def checkProblem(problem, userAnswer):
+    def checkProblem(self, problem, userAnswer):
         realAnswer = problem.solve()
         isCorrect = (realAnswer == userAnswer)
         return isCorrect
@@ -22,6 +22,27 @@ class Dataman_Logic:
 class Dataman_Data:
     def __init__(self):
         self.problems = None # list of problems
+        self.problemIndex = 0 # index of current problem
+        
+    def addProblem(self, problem):
+        """ add a problem to the list of problems
+        input: problem
+        output: none
+        """
+        self.problems.append(problem)
+        
+    def getNextProblem(self):
+        """ get the next problem in the list of problems
+        input: none
+        output: problem
+        """
+        if self.problems == None:
+            return None
+        problem = self.problems[self.problemIndex]
+        self.problemIndex += 1
+        if self.problemIndex >= len(self.problems):
+            self.problemIndex = 0
+        return problem
         
 class Problem:
     def __init__(self, first, operator, second, answer):
@@ -41,6 +62,16 @@ class Problem:
         """
         problemString = str(self.first) + " " + self.operator + " " + \
             str(self.second) + " = " + str(self.answer)
+        return problemString
+    
+    def showProblemToSolve(self):
+        """ returns a string with the problem in human readable form, 
+        but with the answer replaced with a ?   
+        input: none
+        output: string
+        """ 
+        problemString = str(self.first) + " " + self.operator + " " + \
+            str(self.second) + " = " "?"
         return problemString
         
     def solve(self):
@@ -63,6 +94,11 @@ class Problem:
             answer = first + second
         if (operator == "*"):
             answer = first * second
+        if (operator == "-"):
+            answer = first - second
+        if (operator == "/"):
+            # TODO: handle remainders
+            answer = first // second
             
         return answer
     
