@@ -37,11 +37,11 @@ class Dataman_UI:
         problemElements = problemTyped.split(" ")
         #for item in problemElements:
         #    print(item)
-        first = problemElements[0]
+        first = int(problemElements[0])
         operator = problemElements[1]
-        second = problemElements[2]
+        second = int(problemElements[2])
         #equalSign = problemElements[3] # discard this, it's always "="
-        answer = problemElements[4]
+        answer = int(problemElements[4])
         problem = logic.Problem(first, operator, second, answer)
         print("Your problem was: ", str(problem))
         

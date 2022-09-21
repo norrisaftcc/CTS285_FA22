@@ -31,12 +31,33 @@ class Problem:
         self.answer = answer
         
     def __str__(self):
-        """ print the problem in human readable form """
+        """ print the problem in human readable form 
+        >>> myProblem = Problem(2, "+", 2, 4)
+        >>> str(myProblem)
+        '2 + 2 = 4'
+        
+        
+        
+        """
         problemString = str(self.first) + " " + self.operator + " " + \
-            str(self.second) + " = " + self.answer
+            str(self.second) + " = " + str(self.answer)
         return problemString
         
     def solve(self):
-        """ find the actual answer """
+        """ find the actual answer 
+        >>> myProblem = Problem(2, "+", 2, 4)
+        >>> myProblem.solve()
+        4
+        
+        """
         # TODO -- it only works if the answer is 4 now
         return 4
+    
+    
+    
+    
+if __name__ == "__main__":
+    """ Test scaffold """
+    import doctest
+    doctest.testmod()
+    
