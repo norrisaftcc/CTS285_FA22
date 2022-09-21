@@ -44,7 +44,9 @@ class Problem:
         return problemString
         
     def solve(self):
-        """ find the actual answer 
+        """ find the actual answer
+        input: none
+        output: the answer as int (division not yet implemented)
         >>> myProblem = Problem(2, "+", 2, 4)
         >>> myProblem.solve()
         4
@@ -53,8 +55,16 @@ class Problem:
         50
         
         """
-        # TODO -- it only works if the answer is 4 now
-        return 4
+        # parse the problem and do the math manually
+        first = self.first
+        operator = self.operator
+        second = self.second
+        if (operator == "+"):
+            answer = first + second
+        if (operator == "*"):
+            answer = first * second
+            
+        return answer
     
     
     

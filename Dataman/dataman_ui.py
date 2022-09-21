@@ -44,5 +44,8 @@ class Dataman_UI:
         answer = int(problemElements[4])
         problem = logic.Problem(first, operator, second, answer)
         print("Your problem was: ", str(problem))
+        # TODO: properly call checkProblem(), return a bool
+        #isCorrect = self.logic.checkProblem(self, problem, answer)
+        #print(isCorrect)
         
             
