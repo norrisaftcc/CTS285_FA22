@@ -35,6 +35,9 @@ class Problem:
         >>> myProblem = Problem(2, "+", 2, 4)
         >>> str(myProblem)
         '2 + 2 = 4'
+        >>> anotherProb = Problem(5, "*", 10, 50)
+        >>> str(anotherProb)
+        '5 * 10 = 50'
         """
         problemString = str(self.first) + " " + self.operator + " " + \
             str(self.second) + " = " + str(self.answer)
@@ -45,6 +48,9 @@ class Problem:
         >>> myProblem = Problem(2, "+", 2, 4)
         >>> myProblem.solve()
         4
+        >>> anotherProb = Problem(5, "*", 10, 50)
+        >>> anotherProb.solve()
+        50
         
         """
         # TODO -- it only works if the answer is 4 now
