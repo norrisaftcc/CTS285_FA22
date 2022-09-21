@@ -21,7 +21,7 @@ class Dataman_Logic:
     
 class Dataman_Data:
     def __init__(self):
-        self.problems = None # list of problems
+        self.problems = [] # list of problems
         self.problemIndex = 0 # index of current problem
         
     def addProblem(self, problem):
@@ -36,7 +36,8 @@ class Dataman_Data:
         input: none
         output: problem
         """
-        if self.problems == None:
+        
+        if len(self.problems) == 0:
             return None
         problem = self.problems[self.problemIndex]
         self.problemIndex += 1

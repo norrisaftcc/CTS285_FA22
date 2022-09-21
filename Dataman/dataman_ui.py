@@ -7,12 +7,12 @@ Created on Wed Sep 21 10:48:43 2022
 Dataman_ui -- user interface for project
 """
 import dataman_logic as logic
-import dataman_data as data 
+#import dataman_data as data 
 
 class Dataman_UI:
     def __init__ (self):
         self.logic = logic.Dataman_Logic()
-        self.data  = data.Dataman_Data()
+        self.data  = logic.Dataman_Data()
         
     def showMenu(self):
         print ("Dataman Main Menu")
@@ -80,7 +80,7 @@ class Dataman_UI:
                     print("No problems in memory bank.")
                     return False
                 print("Next problem: (#", self.data.problemIndex, ")")
-                print(problem).showProblemToSolve()
+                print(problem.showProblemToSolve())
                 answer = int(input()) 
                 # check if the answer is correct
                 isCorrect = self.logic.checkProblem(problem, problem.answer)
@@ -89,6 +89,18 @@ class Dataman_UI:
                     print("Correct!")
                 else:
                     print("Incorrect.")
+            elif choice == 2:
+                self.doAddProblems()
+                
+    def doAddProblems(self):
+        """ let user create a problem
+            add it to the memory bank
+        """
+        print("Problem format is: 2 + 2 = 4")
+        problemTyped = input("Enter math problem: ")
+        problem = self.parseProblem(problemTyped)
+        self.data.addProblem(problem)
+        print("Problem added to memory bank.")
             
         
             
