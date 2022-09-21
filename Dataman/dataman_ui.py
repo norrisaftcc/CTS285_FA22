@@ -35,8 +35,8 @@ class Dataman_UI:
         print("Problem format is: 2 + 2 = 4")
         problemTyped = input("Enter math problem: ")
         problemElements = problemTyped.split(" ")
-        for item in problemElements:
-            print(item)
+        #for item in problemElements:
+        #    print(item)
         first = problemElements[0]
         operator = problemElements[1]
         second = problemElements[2]
