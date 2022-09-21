@@ -35,9 +35,6 @@ class Problem:
         >>> myProblem = Problem(2, "+", 2, 4)
         >>> str(myProblem)
         '2 + 2 = 4'
-        
-        
-        
         """
         problemString = str(self.first) + " " + self.operator + " " + \
             str(self.second) + " = " + str(self.answer)
