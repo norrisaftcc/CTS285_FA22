@@ -44,6 +44,13 @@ class Dataman_Data:
         if self.problemIndex >= len(self.problems):
             self.problemIndex = 0
         return problem
+    
+    def getAllProblems(self): 
+        """ get all problems from the Memory Bank
+        input: none
+        output: list of Problem objects
+        """
+        return self.problems
         
 class Problem:
     def __init__(self, first, operator, second, answer):

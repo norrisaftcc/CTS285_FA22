@@ -70,6 +70,7 @@ class Dataman_UI:
             print("Memory Bank Menu")
             print("1. Solve Next Problem")
             print("2. Add Problems")
+            print("3. List All Problems")
             print("0. Exit")
             choice = int(input("Selection: "))
             if choice == 0: # exit
@@ -91,6 +92,8 @@ class Dataman_UI:
                     print("Incorrect.")
             elif choice == 2:
                 self.doAddProblems()
+            elif choice == 3:
+                self.listAllProblems()
                 
     def doAddProblems(self):
         """ let user create a problem
@@ -101,6 +104,18 @@ class Dataman_UI:
         problem = self.parseProblem(problemTyped)
         self.data.addProblem(problem)
         print("Problem added to memory bank.")
+        
+    def listAllProblems(self):
+        """ Display all problems in the memory bank.
+        We will later allow editing this list."""
+        allProblems = self.data.getAllProblems()
+        print ("---- All Problems ----")
+        if len(allProblems) == 0:
+            print("No problems in memory bank.")
+        else:
+            for problem in allProblems:
+                print(problem)
+        print ("----------------------")
             
         
             
