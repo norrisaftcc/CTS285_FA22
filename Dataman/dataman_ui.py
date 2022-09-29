@@ -63,7 +63,9 @@ class Dataman_UI:
    
         
     def doMemoryBank(self):
-        """ do the memory bank menu """
+        """ do the memory bank menu 
+        TODO:   right now problem answers aren't validated.
+                run solve on them before adding to the list."""
         choice = -1
         while choice != 0:  
                 
