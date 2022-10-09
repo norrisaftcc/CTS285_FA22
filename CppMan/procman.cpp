@@ -72,6 +72,7 @@ int main()
 }
 // Start the program, loop until exit
 int start_dataman_program() {
+    /*
     bool keepGoing = true;
     while (keepGoing) {
         cout << "Starting DataMan program" << endl;
@@ -84,7 +85,8 @@ int start_dataman_program() {
         if (command == "menu") {
             ui_main_menu();
         }
-    }
+    }*/
+    ui_main_menu();
     return 0;
 }
 
@@ -127,15 +129,15 @@ int ui_answer_checker() {
     problem p = read_problem();
     cout << "You entered: " << textify_problem(p) << endl;
 
-    bool isCorrect = check_problem(p);
-    if (isCorrect) {
+    bool isCorrect = 0;
+    isCorrect = check_problem(p);
+    //cout << "DEBUG: isCorrect = " << isCorrect << endl;
+    if (true == isCorrect) {
         cout << "Correct!" << endl;
     }
     else {
         cout << "Incorrect!" << endl;
     }
-
-
     return 0;
 }
 
@@ -172,7 +174,7 @@ string textify_problem(problem p) {
 bool check_problem(problem p) {
     // returns true if the problem is correct
     int result = 0;
-    bool isCorrect = false;
+    bool isCorrect = 0;
     if (p.operand == "+") {
         result = p.operator1 + p.operator2;
     }
@@ -190,6 +192,13 @@ bool check_problem(problem p) {
         return false;
     }
     cout << "DEBUG: result = " << result << " p.answer = " << p.answer << endl;
-    isCorrect = (result == p.answer);
-    return result;
+    if (result == p.answer) {
+        isCorrect = 1; // true
+    }
+    //isCorrect = (result == p.answer);
+    //cout << "DEBUG: check_problem: isCorrect = " << isCorrect << endl;
+
+    // i spent 15 minutes figuring out why my answers were wrong
+    // i was returning result, not isCorrect (and it was getting munged into a bool)
+    return isCorrect;
 }
