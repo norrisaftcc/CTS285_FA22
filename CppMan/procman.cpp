@@ -133,10 +133,10 @@ int ui_answer_checker() {
     isCorrect = check_problem(p);
     //cout << "DEBUG: isCorrect = " << isCorrect << endl;
     if (true == isCorrect) {
-        cout << "Correct!" << endl;
+        cout << endl << "*** Correct! ***" << endl << endl;
     }
     else {
-        cout << "Incorrect!" << endl;
+        cout << endl << "*** Incorrect! ***" << endl << endl;
     }
     return 0;
 }
