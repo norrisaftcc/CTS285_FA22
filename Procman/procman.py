@@ -5,6 +5,8 @@
     It is intended to show when using object-oriented programming is useful,
     and why. Presumably it will get to the point that breaking it into
     modules, and then objects, will make sense...
+
+    Fall 2024: Made some minor changes to the comments.
 """
 # Memory Bank for this version is a list of problems kept in global memory
 # A problem is a list of 3 items: [operand1, operator, operand2, equals, userAnswer]]
@@ -210,3 +212,4 @@ def logic_check_problem(problem, userAnswer):
 # launch the program.
 if __name__ == "__main__":
     main()
+
