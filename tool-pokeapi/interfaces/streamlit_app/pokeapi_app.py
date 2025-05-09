@@ -10,6 +10,9 @@ import streamlit as st
 import pandas as pd
 from datetime import datetime
 
+# Set page config - must be the first Streamlit command
+st.set_page_config(page_title="PokeSense - Pokemon Collection", layout="wide")
+
 # Add the parent directory to the path so we can import the core module
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
 
@@ -33,6 +36,10 @@ if 'do_sample_search' not in st.session_state:
     st.session_state.do_sample_search = False
 if 'sample_term' not in st.session_state:
     st.session_state.sample_term = ""
+    
+# Initialize default featured Pokemon (Pikachu)
+if 'featured_pokemon' not in st.session_state:
+    st.session_state.featured_pokemon = None
 
 
 def search_pokemon():
@@ -60,6 +67,16 @@ def add_pokemon_to_collection(pokemon_name):
             success = st.session_state.collection.add_pokemon(pokemon)
             return success, pokemon
     return False, None
+
+
+def load_featured_pokemon():
+    """Load the featured Pokemon (Pikachu) if not already loaded."""
+    if st.session_state.featured_pokemon is None:
+        with st.spinner("Loading featured Pokemon..."):
+            pokemon_data = PokeApiService.get_pokemon_details("pikachu")
+            if pokemon_data:
+                info = PokeApiService.extract_pokemon_info(pokemon_data)
+                st.session_state.featured_pokemon = info
 
 
 def get_pokemon_type_color(type_name):
@@ -106,8 +123,67 @@ def display_type_badge(type_name):
     """
 
 
-# Set page title and header
-st.set_page_config(page_title="PokeSense - Pokemon Collection", layout="wide")
+def display_pokemon_card(info, add_button=True, button_key=""):
+    """Display a Pokemon card with consistent styling."""
+    # Create a card-like container
+    with st.container():
+        st.write("---")
+        
+        # Create a row for sprite and details
+        col1, col2 = st.columns([1, 2])
+        
+        with col1:
+            sprite_url = info.get('sprites', {}).get('official_artwork') or info.get('sprites', {}).get('front_default')
+            if sprite_url:
+                st.image(sprite_url, width=120)
+            else:
+                st.write("No sprite available")
+        
+        with col2:
+            st.write(f"**#{info['id']} {info['name'].capitalize()}**")
+            
+            # Display types
+            types_html = ""
+            for type_name in info['types']:
+                types_html += display_type_badge(type_name)
+            st.markdown(types_html, unsafe_allow_html=True)
+            
+            st.write(f"Height: {info['height']/10:.1f} m")
+            st.write(f"Weight: {info['weight']/10:.1f} kg")
+            
+            # Add to collection button (optional)
+            if add_button:
+                if st.button(f"Add to Collection", key=button_key):
+                    success, pokemon = add_pokemon_to_collection(info['name'])
+                    if success:
+                        st.success(f"Added '{info['name'].capitalize()}' to your collection!")
+                    else:
+                        st.error("This Pokemon is already in your collection.")
+        
+        # Expandable section for more details
+        with st.expander("More Details"):
+            # Show abilities
+            if info['abilities']:
+                st.write("**Abilities:**")
+                for ability in info['abilities']:
+                    st.write(f"- {ability.replace('-', ' ').title()}")
+            
+            # Show stats
+            if info['stats']:
+                st.write("**Base Stats:**")
+                for stat in info['stats']:
+                    stat_name = stat['name'].replace('-', ' ').title()
+                    stat_value = stat['base_value']
+                    # Create a progress bar for the stat
+                    max_stat = 255  # Maximum possible stat value
+                    st.write(f"{stat_name}: {stat_value}")
+                    st.progress(min(stat_value / max_stat, 1.0))
+
+
+# Load the featured Pokemon
+load_featured_pokemon()
+
+# Display header and app title
 st.title('PokeSense - PokeAPI Integration')
 
 st.write("""
@@ -177,59 +253,7 @@ if st.session_state.search_results:
                     pokemon_data = PokeApiService.get_pokemon_details(pokemon_name)
                     if pokemon_data:
                         info = PokeApiService.extract_pokemon_info(pokemon_data)
-                        
-                        # Create a card-like container
-                        with st.container():
-                            st.write("---")
-                            
-                            # Create a row for sprite and details
-                            col1, col2 = st.columns([1, 2])
-                            
-                            with col1:
-                                sprite_url = info.get('sprites', {}).get('official_artwork') or info.get('sprites', {}).get('front_default')
-                                if sprite_url:
-                                    st.image(sprite_url, width=120)
-                                else:
-                                    st.write("No sprite available")
-                            
-                            with col2:
-                                st.write(f"**#{info['id']} {info['name'].capitalize()}**")
-                                
-                                # Display types
-                                types_html = ""
-                                for type_name in info['types']:
-                                    types_html += display_type_badge(type_name)
-                                st.markdown(types_html, unsafe_allow_html=True)
-                                
-                                st.write(f"Height: {info['height']/10:.1f} m")
-                                st.write(f"Weight: {info['weight']/10:.1f} kg")
-                                
-                                # Add to collection button
-                                if st.button(f"Add to Collection", key=f"add_{i}"):
-                                    success, pokemon = add_pokemon_to_collection(pokemon_name)
-                                    if success:
-                                        st.success(f"Added '{info['name'].capitalize()}' to your collection!")
-                                    else:
-                                        st.error("This Pokemon is already in your collection.")
-                            
-                            # Expandable section for more details
-                            with st.expander("More Details"):
-                                # Show abilities
-                                if info['abilities']:
-                                    st.write("**Abilities:**")
-                                    for ability in info['abilities']:
-                                        st.write(f"- {ability.replace('-', ' ').title()}")
-                                
-                                # Show stats
-                                if info['stats']:
-                                    st.write("**Base Stats:**")
-                                    for stat in info['stats']:
-                                        stat_name = stat['name'].replace('-', ' ').title()
-                                        stat_value = stat['base_value']
-                                        # Create a progress bar for the stat
-                                        max_stat = 255  # Maximum possible stat value
-                                        st.write(f"{stat_name}: {stat_value}")
-                                        st.progress(min(stat_value / max_stat, 1.0))
+                        display_pokemon_card(info, add_button=True, button_key=f"add_{i}")
     
     with collection_tab:
         # Display the Pokemon collection
@@ -360,7 +384,7 @@ if st.session_state.search_results:
                                 st.write("N/A")
 
 else:
-    # No search results yet, show collection or welcome message
+    # No search results yet, show featured Pokemon or collection
     if pokemon_in_collection:
         st.write("## Your Pokemon Collection")
         
@@ -386,6 +410,13 @@ else:
                     st.write("⭐ Favorite")
         
     else:
+        # Show featured Pokemon (Pikachu)
+        if st.session_state.featured_pokemon:
+            st.write("## Featured Pokemon")
+            display_pokemon_card(st.session_state.featured_pokemon, add_button=True, button_key="add_featured")
+            
+            st.write("---")
+            
         st.write("## Welcome to PokeSense!")
         st.write("""
         Search for Pokemon using the form in the sidebar to get started.
@@ -395,13 +426,16 @@ else:
         # Sample searches to help users get started
         st.write("### Try these sample searches:")
         sample_searches = [
-            "Pikachu",
             "Char",  # Will match Charmander, Charmeleon, etc.
             "Eevee",
-            "Mew"  # Will match Mewtwo and Mew
+            "Mew",  # Will match Mewtwo and Mew
+            "Dragon" # Will find dragon-type Pokémon
         ]
         
-        for sample in sample_searches:
-            if st.button(f"Search for '{sample}'"):
-                trigger_sample_search(sample)
-                st.rerun()  # Refresh the page
+        # Display sample searches in a row
+        cols = st.columns(len(sample_searches))
+        for i, sample in enumerate(sample_searches):
+            with cols[i]:
+                if st.button(f"Search '{sample}'"):
+                    trigger_sample_search(sample)
+                    st.rerun()  # Refresh the page
