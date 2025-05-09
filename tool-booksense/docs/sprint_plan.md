@@ -4,56 +4,83 @@
 
 This document outlines the development plan for the BookSense tool project, organized into sprints with prioritized tasks. Each sprint is designed to deliver incremental value and build upon previous work.
 
-## Sprint 1: Core Foundation (2 weeks)
+## Sprint 1: Core Foundation (2 weeks) - COMPLETED
 
 **Goal**: Establish the foundation of the BookSense application with the core data model and basic storage.
 
 ### High Priority
-1. Define and implement the Book data model
-2. Implement JSON file storage backend
-3. Create core CRUD operations for books
-4. Set up project structure and development environment
+1. ✅ Define and implement the Book data model
+2. ✅ Implement JSON file storage backend
+3. ✅ Create core CRUD operations for books
+4. ✅ Set up project structure and development environment
 
 ### Medium Priority
-1. Add basic validation for book data
-2. Implement simple search functionality
-3. Create utility functions for common operations
+1. ✅ Add basic validation for book data
+2. ✅ Implement simple search functionality
+3. ✅ Create utility functions for common operations
 
 ### Low Priority
-1. Set up logging framework
-2. Add unit tests for core functionality
+1. ✅ Set up logging framework
+2. ✅ Add unit tests for core functionality
 
 ### Deliverables
-- Functional core module with data model and storage
-- Unit tests for core functionality
-- Documentation for core components
+- ✅ Functional core module with data model and storage
+- ✅ Unit tests for core functionality
+- ✅ Documentation for core components
 
-## Sprint 2: Streamlit Interface Enhancement (2 weeks)
+## Sprint 2: Streamlit Interface and Open Library Integration (2 weeks) - IN PROGRESS
 
-**Goal**: Enhance the existing Streamlit interface to use the core module and add more features.
+**Goal**: Create a fully functional web interface with Open Library integration for searching and managing books.
 
 ### High Priority
-1. Refactor the Streamlit example to use the core module
-2. Implement persistent storage for books added through the interface
-3. Add book detail view functionality
-4. Implement edit and delete operations
+1. ✅ Refactor the Streamlit example to use the core module
+2. ✅ Implement persistent storage for books added through the interface
+3. ✅ Add book detail view functionality
+4. ✅ Implement edit and delete operations
+5. ✅ Integrate with Open Library API for book search
 
 ### Medium Priority
-1. Add advanced filtering and sorting options
-2. Implement book cover image display (using URLs)
-3. Create statistics visualizations for the collection
+1. ✅ Add filtering and sorting options
+2. ✅ Implement book cover image display from Open Library
+3. ✅ Create basic statistics for the collection
 
-### Low Priority
-1. Add import/export functionality (CSV, JSON)
-2. Implement user preferences storage
+### Low Priority (MVP Required)
+1. ⬜ Add import/export functionality (CSV, JSON)
+2. ⬜ Add visualization for collection statistics
 
 ### Deliverables
-- Fully functional Streamlit web interface
-- Persistent data storage
-- Import/export capabilities
-- User documentation for the Streamlit interface
+- ✅ Fully functional Streamlit web interface
+- ✅ Open Library API integration
+- ✅ Persistent data storage
+- ⬜ Import/export capabilities
+- ✅ User documentation for the Streamlit interface
 
-## Sprint 3: Command-Line Interface (2 weeks)
+## MVP Definition
+
+The Minimum Viable Product (MVP) for BookSense includes:
+
+1. **Core Functionality**:
+   - ✅ Book data model with validation
+   - ✅ Multiple storage options (JSON and SQLite)
+   - ✅ Complete CRUD operations for books
+
+2. **User Interface**:
+   - ✅ Streamlit web interface
+   - ✅ Book listing and details view
+   - ✅ Search and filtering capabilities
+   - ✅ Edit and delete functionality
+
+3. **Open Library Integration**:
+   - ✅ Search books by title, author, subject, or ISBN
+   - ✅ Retrieve and display book covers
+   - ✅ Import book details from Open Library
+
+4. **Data Management**:
+   - ✅ Persistent storage of user's book collection
+   - ⬜ Import/export collection data
+   - ✅ Basic statistics about collection
+
+## Sprint 3: Command-Line Interface (2 weeks) - FUTURE
 
 **Goal**: Create a command-line interface for BookSense that allows for efficient management of book collections from the terminal.
 
@@ -77,7 +104,7 @@ This document outlines the development plan for the BookSense tool project, orga
 - Documentation and help text
 - Import/export capabilities
 
-## Sprint 4: API Development (2 weeks)
+## Sprint 4: API Development (2 weeks) - FUTURE
 
 **Goal**: Develop a RESTful API for BookSense that allows programmatic access to book collections.
 
@@ -101,7 +128,7 @@ This document outlines the development plan for the BookSense tool project, orga
 - API documentation
 - Basic security features
 
-## Sprint 5: Desktop GUI (3 weeks)
+## Sprint 5: Desktop GUI (3 weeks) - FUTURE
 
 **Goal**: Create a desktop GUI application for BookSense providing rich interactive features.
 
@@ -125,7 +152,7 @@ This document outlines the development plan for the BookSense tool project, orga
 - User documentation
 - Installation package
 
-## Sprint 6: Integration and Polish (2 weeks)
+## Sprint 6: Integration and Polish (2 weeks) - FUTURE
 
 **Goal**: Integrate all components, enhance testing, and polish the application for release.
 
@@ -152,7 +179,6 @@ This document outlines the development plan for the BookSense tool project, orga
 
 ## Backlog (Future Sprints)
 
-- Integration with external book APIs (Google Books, Open Library)
 - Book recommendations based on user preferences
 - Social features (sharing collections, recommendations)
 - Mobile application interface
