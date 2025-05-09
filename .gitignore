@@ -2,3 +2,5 @@
 .DS_Store
 *.pyc
 *.exe
+
+**/.claude/settings.local.json
