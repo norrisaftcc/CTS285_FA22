@@ -3,53 +3,60 @@
 ## Project Setup (Day 1-2)
 
 - [x] Create project structure and organization
+- [x] Create requirements.txt for core module
 - [ ] Set up Python virtual environment with required dependencies
-- [ ] Create requirements.txt for core module
 - [ ] Configure linting and code style tools (flake8, black)
 - [ ] Set up basic unit testing framework (pytest)
-- [ ] Create initial documentation structure
+- [x] Create initial documentation structure
 
 ## Data Model Implementation (Day 3-5)
 
-- [ ] Define Book class with all required attributes
-- [ ] Implement data validation for Book attributes
-- [ ] Create serialization/deserialization methods (to/from dict)
-- [ ] Add helper methods for book comparison and display
+- [x] Define Book class with all required attributes
+- [x] Implement data validation for Book attributes
+- [x] Create serialization/deserialization methods (to/from dict)
+- [x] Add helper methods for book comparison and display
 - [ ] Write unit tests for Book model
-- [ ] Document the data model with examples
+- [x] Document the data model with examples
 
-## Storage Layer (Day 6-8)
+## Storage Layer (Day 6-10)
 
-- [ ] Define storage interface/abstract class
-- [ ] Implement JSON file storage backend
-  - [ ] Create methods for reading entire collection
-  - [ ] Add methods for writing collection to file
-  - [ ] Implement transaction support (to prevent data corruption)
-- [ ] Add error handling for file operations
-- [ ] Implement CSV storage backend (optional)
+- [x] Define storage interface/abstract class
+- [x] Implement JSON file storage backend
+  - [x] Create methods for reading entire collection
+  - [x] Add methods for writing collection to file
+  - [x] Implement transaction support (to prevent data corruption)
+- [x] Add error handling for file operations
+- [ ] Implement SQLite storage backend (HIGH PRIORITY)
+  - [ ] Create table schema for books
+  - [ ] Implement CRUD operations using SQL
+  - [ ] Add indexing for efficient queries
+  - [ ] Implement transaction support
 - [ ] Write unit tests for storage implementations
-- [ ] Create storage documentation
+- [ ] Create storage documentation with comparison between JSON and SQLite approaches
+- [ ] Create a storage factory to easily switch between implementations
 
-## Operations Layer (Day 9-12)
+## Operations Layer (Day 11-14)
 
-- [ ] Create BookCollection class to manage book operations
-- [ ] Implement CRUD operations:
-  - [ ] Add new book
-  - [ ] Get book by ID
-  - [ ] Update existing book
-  - [ ] Delete book
-- [ ] Add collection operations:
-  - [ ] List all books
-  - [ ] Filter books by attributes
-  - [ ] Sort books by different fields
-  - [ ] Search books by text
-- [ ] Implement basic statistics methods
+- [x] Create BookCollection class to manage book operations
+- [x] Implement CRUD operations:
+  - [x] Add new book
+  - [x] Get book by ID
+  - [x] Update existing book
+  - [x] Delete book
+- [x] Add collection operations:
+  - [x] List all books
+  - [x] Filter books by attributes
+  - [x] Sort books by different fields
+  - [x] Search books by text
+- [x] Implement basic statistics methods
 - [ ] Write unit tests for all operations
-- [ ] Document the operations layer
+- [x] Document the operations layer
 
-## Integration and Review (Day 13-14)
+## Integration and Review (Day 15-16)
 
-- [ ] Create simple example scripts demonstrating core functionality
+- [x] Create simple example scripts demonstrating core functionality
+- [ ] Update Streamlit interface to use the core module
+- [ ] Add storage selection option in Streamlit interface
 - [ ] Review code for consistency and quality
 - [ ] Ensure all tests pass and coverage is adequate
 - [ ] Complete documentation for Sprint 1 deliverables
@@ -61,4 +68,6 @@
 - Unit tests cover at least 80% of the code
 - Documentation is complete and accurate
 - Example scripts work as expected
+- Both storage implementations (JSON and SQLite) are functional
+- Storage backend can be switched without changing application code
 - Code review has been completed
