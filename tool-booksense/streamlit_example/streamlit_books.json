@@ -1,0 +1,41 @@
+[
+  {
+    "id": "90507f77-83f4-4aa0-a8fb-9f9b458ba10b",
+    "title": "The Great Gatsby",
+    "author": "F. Scott Fitzgerald",
+    "year": 1920,
+    "isbn": null,
+    "genre": [],
+    "rating": 0.0,
+    "description": "",
+    "cover_url": "https://covers.openlibrary.org/b/olid/OL22570129M-M.jpg",
+    "read_status": "To Read",
+    "date_added": "2025-05-09T18:28:48.468530"
+  },
+  {
+    "id": "00e2f809-f4c1-4221-9eb3-e8b81e9e37cf",
+    "title": "Infinite Jest",
+    "author": "David Foster Wallace",
+    "year": 2009,
+    "isbn": null,
+    "genre": [],
+    "rating": 0.0,
+    "description": "",
+    "cover_url": "https://covers.openlibrary.org/b/olid/OL35719762M-M.jpg",
+    "read_status": "To Read",
+    "date_added": "2025-05-09T18:28:59.359747"
+  },
+  {
+    "id": "5600cdaf-f0df-4692-afc6-f4d00d2bc2b8",
+    "title": "American Psycho",
+    "author": "Bret Easton Ellis",
+    "year": 1991,
+    "isbn": null,
+    "genre": [],
+    "rating": 0.0,
+    "description": "",
+    "cover_url": "https://covers.openlibrary.org/b/olid/OL1857983M-M.jpg",
+    "read_status": "To Read",
+    "date_added": "2025-05-09T18:29:07.472312"
+  }
+]

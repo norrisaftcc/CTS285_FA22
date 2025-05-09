@@ -4,3 +4,5 @@
 *.exe
 
 **/.claude/settings.local.json
+tool-booksense/streamlit_book_example.zip
+*.zip
