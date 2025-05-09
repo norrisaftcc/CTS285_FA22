@@ -1,0 +1,190 @@
+[
+  {
+    "id": "c2d0cce6-6b75-4fda-8ffe-e7fd754dcd62",
+    "name": "pikachu",
+    "pokemon_id": 25,
+    "types": [
+      "electric"
+    ],
+    "sprites": {
+      "front_default": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/25.png",
+      "back_default": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/back/25.png",
+      "front_shiny": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/25.png",
+      "back_shiny": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/back/shiny/25.png",
+      "official_artwork": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/25.png"
+    },
+    "height": 4,
+    "weight": 60,
+    "stats": [
+      {
+        "name": "hp",
+        "base_value": 35
+      },
+      {
+        "name": "attack",
+        "base_value": 55
+      },
+      {
+        "name": "defense",
+        "base_value": 40
+      },
+      {
+        "name": "special-attack",
+        "base_value": 50
+      },
+      {
+        "name": "special-defense",
+        "base_value": 50
+      },
+      {
+        "name": "speed",
+        "base_value": 90
+      }
+    ],
+    "abilities": [
+      "static",
+      "lightning-rod"
+    ],
+    "moves": [
+      "mega-punch",
+      "pay-day",
+      "thunder-punch",
+      "slam",
+      "double-kick",
+      "mega-kick",
+      "headbutt",
+      "body-slam",
+      "take-down",
+      "double-edge"
+    ],
+    "favorite": false,
+    "notes": "",
+    "date_added": "2025-05-09T19:40:01.009793"
+  },
+  {
+    "id": "e95f27f3-370d-4721-8385-73fa0705a11a",
+    "name": "eevee",
+    "pokemon_id": 133,
+    "types": [
+      "normal"
+    ],
+    "sprites": {
+      "front_default": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/133.png",
+      "back_default": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/back/133.png",
+      "front_shiny": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/133.png",
+      "back_shiny": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/back/shiny/133.png",
+      "official_artwork": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/133.png"
+    },
+    "height": 3,
+    "weight": 65,
+    "stats": [
+      {
+        "name": "hp",
+        "base_value": 55
+      },
+      {
+        "name": "attack",
+        "base_value": 55
+      },
+      {
+        "name": "defense",
+        "base_value": 50
+      },
+      {
+        "name": "special-attack",
+        "base_value": 45
+      },
+      {
+        "name": "special-defense",
+        "base_value": 65
+      },
+      {
+        "name": "speed",
+        "base_value": 55
+      }
+    ],
+    "abilities": [
+      "run-away",
+      "adaptability",
+      "anticipation"
+    ],
+    "moves": [
+      "pay-day",
+      "double-kick",
+      "sand-attack",
+      "headbutt",
+      "tackle",
+      "body-slam",
+      "take-down",
+      "double-edge",
+      "tail-whip",
+      "bite"
+    ],
+    "favorite": false,
+    "notes": "",
+    "date_added": "2025-05-09T19:40:28.107937"
+  },
+  {
+    "id": "83253b68-b04c-463c-8249-add3e7393be0",
+    "name": "eevee",
+    "pokemon_id": 133,
+    "types": [
+      "normal"
+    ],
+    "sprites": {
+      "front_default": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/133.png",
+      "back_default": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/back/133.png",
+      "front_shiny": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/133.png",
+      "back_shiny": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/back/shiny/133.png",
+      "official_artwork": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/133.png"
+    },
+    "height": 3,
+    "weight": 65,
+    "stats": [
+      {
+        "name": "hp",
+        "base_value": 55
+      },
+      {
+        "name": "attack",
+        "base_value": 55
+      },
+      {
+        "name": "defense",
+        "base_value": 50
+      },
+      {
+        "name": "special-attack",
+        "base_value": 45
+      },
+      {
+        "name": "special-defense",
+        "base_value": 65
+      },
+      {
+        "name": "speed",
+        "base_value": 55
+      }
+    ],
+    "abilities": [
+      "run-away",
+      "adaptability",
+      "anticipation"
+    ],
+    "moves": [
+      "pay-day",
+      "double-kick",
+      "sand-attack",
+      "headbutt",
+      "tackle",
+      "body-slam",
+      "take-down",
+      "double-edge",
+      "tail-whip",
+      "bite"
+    ],
+    "favorite": false,
+    "notes": "",
+    "date_added": "2025-05-09T19:40:34.236720"
+  }
+]
