@@ -28,6 +28,14 @@ if 'collection' not in st.session_state:
     storage = JsonStorage(storage_file)
     st.session_state.collection = BookCollection(storage)
 
+# Initialize session state for the sample search functionality
+if 'do_sample_search' not in st.session_state:
+    st.session_state.do_sample_search = False
+if 'sample_term' not in st.session_state:
+    st.session_state.sample_term = ""
+if 'sample_type' not in st.session_state:
+    st.session_state.sample_type = "title"
+
 
 def search_books():
     """Search for books based on user input."""
@@ -42,6 +50,13 @@ def search_books():
                 limit=10
             )
             st.session_state.search_results = results
+
+
+def trigger_sample_search(sample_text, is_isbn=False):
+    """Set up a sample search to be executed."""
+    st.session_state.do_sample_search = True
+    st.session_state.sample_term = sample_text
+    st.session_state.sample_type = "isbn" if is_isbn else "title"
 
 
 def add_book_to_collection(book_data):
@@ -59,6 +74,19 @@ st.write("""
 This application demonstrates how to integrate the Open Library API with BookSense.
 Search for books, view details, and add them to your collection.
 """)
+
+# Handle sample search if triggered
+if st.session_state.do_sample_search:
+    # Reset the flag
+    st.session_state.do_sample_search = False
+    
+    # Set the search form values
+    st.session_state.search_query = st.session_state.sample_term
+    st.session_state.search_type = st.session_state.sample_type
+    
+    # Perform the search
+    search_books()
+    
 
 # Create sidebar
 st.sidebar.title("Book Search")
@@ -279,8 +307,7 @@ else:
         ]
         
         for sample in sample_searches:
+            is_isbn = sample.startswith("9")
             if st.button(f"Search for '{sample}'"):
-                st.session_state.search_query = sample
-                st.session_state.search_type = "title" if not sample.startswith("9") else "isbn"
-                search_books()
-                st.rerun()  # Refresh the page with search results
+                trigger_sample_search(sample, is_isbn)
+                st.rerun()  # Refresh the page
