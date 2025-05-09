@@ -85,21 +85,50 @@ def import_from_csv(csv_str: str) -> List[Book]:
     if not csv_str.strip():
         return []
     
-    input_data = StringIO(csv_str)
-    reader = csv.DictReader(input_data)
-    books = []
-    
-    for row in reader:
-        # Convert comma-separated strings back to lists
-        if 'genre' in row and row['genre']:
-            row['genre'] = row['genre'].split(',')
+    try:
+        input_data = StringIO(csv_str)
+        reader = csv.DictReader(input_data)
+        books = []
         
-        try:
-            books.append(Book.from_dict(row))
-        except (ValueError, TypeError) as e:
-            print(f"Error importing book: {e}")
-    
-    return books
+        for row in reader:
+            # Process each row
+            book_data = {}
+            
+            # Process string fields
+            for key, value in row.items():
+                if key in ["id", "title", "author", "isbn", "description", "cover_url", "read_status", "date_added"]:
+                    book_data[key] = value
+                
+                # Convert genre string to list
+                elif key == "genre" and value:
+                    book_data[key] = value.split(",")
+                
+                # Convert numeric fields
+                elif key == "year" and value:
+                    try:
+                        book_data[key] = int(value)
+                    except ValueError:
+                        pass  # Will use default value
+                
+                elif key == "rating" and value:
+                    try:
+                        book_data[key] = float(value)
+                    except ValueError:
+                        pass  # Will use default value
+            
+            try:
+                # Set default empty list for genre if not provided
+                if "genre" not in book_data or not book_data["genre"]:
+                    book_data["genre"] = []
+                
+                books.append(Book.from_dict(book_data))
+            except Exception as e:
+                print(f"Error importing book: {e}")
+        
+        return books
+    except Exception as e:
+        print(f"Error loading books: {e}")
+        return []
 
 
 def generate_sample_books() -> List[Book]:
