@@ -238,7 +238,7 @@ class TestBookCollection(unittest.TestCase):
         
         # Filter by genre (multiple values)
         results = self.collection.filter_books(genre=["Fiction"])
-        self.assertEqual(len(results), 3)
+        self.assertEqual(len(results), 3)  # All books with Fiction genre
         self.assertTrue(all("Fiction" in b.genre for b in results))
         
         # Filter by read status
@@ -251,7 +251,7 @@ class TestBookCollection(unittest.TestCase):
             genre="Fiction",
             read_status="Read"
         )
-        self.assertEqual(len(results), 2)
+        self.assertEqual(len(results), 2)  # Two books with Fiction genre and Read status
         self.assertTrue(all(
             "Fiction" in b.genre and b.read_status == "Read" 
             for b in results
@@ -267,16 +267,27 @@ class TestBookCollection(unittest.TestCase):
 
     def test_sort_books(self):
         """Test sorting books by various attributes."""
+        # Get all books
+        books = self.collection.list_books()
+        # Find the book with title "Another Book"
+        another_book = next((b for b in books if b.title == "Another Book"), None)
+        # Find the book with title "Test Book 2"
+        test_book_2 = next((b for b in books if b.title == "Test Book 2"), None)
+        
         # Sort by title (ascending)
         results = self.collection.sort_books("title")
         self.assertEqual(len(results), len(self.test_books))
-        self.assertEqual(results[0].title, "Another Book")
-        self.assertEqual(results[-1].title, "Test Book 2")
+        # Ensure "Another Book" is first (alphabetically)
+        self.assertEqual(results[0].id, another_book.id)  
+        # Ensure "Test Book 2" is last (alphabetically)
+        self.assertEqual(results[-1].id, test_book_2.id)
         
         # Sort by title (descending)
         results = self.collection.sort_books("title", reverse=True)
-        self.assertEqual(results[0].title, "Test Book 2")
-        self.assertEqual(results[-1].title, "Another Book")
+        # "Test Book 2" should be first in reverse order
+        self.assertEqual(results[0].id, test_book_2.id)
+        # "Another Book" should be last in reverse order
+        self.assertEqual(results[-1].id, another_book.id)
         
         # Sort by year (ascending)
         results = self.collection.sort_books("year")
