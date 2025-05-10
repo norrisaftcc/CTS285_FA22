@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dataman: Math Problem Solver & Trainer</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            padding-top: 20px;
+        }
+        .header {
+            background-color: #4A90E2;
+            color: white;
+            padding: 30px 0;
+            margin-bottom: 30px;
+            border-radius: 10px;
+        }
+        .header h1 {
+            font-size: 3rem;
+            font-weight: 700;
+        }
+        .header p {
+            font-size: 1.5rem;
+            opacity: 0.9;
+        }
+        h2 {
+            color: #4A90E2;
+            border-bottom: 2px solid #e9ecef;
+            padding-bottom: 10px;
+            margin-top: 30px;
+            margin-bottom: 20px;
+        }
+        h3 {
+            color: #50E3C2;
+            margin-top: 25px;
+        }
+        .feature-box {
+            border: 1px solid #e9ecef;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            background-color: #f8f9fa;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .feature-box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        .feature-box h3 {
+            color: #4A90E2;
+            margin-top: 0;
+        }
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            color: #50E3C2;
+        }
+        .theme-showcase {
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+        .theme-header {
+            padding: 15px;
+            color: white;
+            font-weight: bold;
+            text-align: center;
+        }
+        .dataman-theme {
+            background-color: #2D3E50;
+        }
+        .little-professor-theme {
+            background-color: #F5D76E;
+            color: #34495E !important;
+        }
+        .theme-content {
+            padding: 15px;
+            min-height: 200px;
+        }
+        .code-snippet {
+            background-color: #f8f9fa;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 15px 0;
+            font-family: monospace;
+            white-space: pre-wrap;
+            font-size: 0.9rem;
+        }
+        .footer {
+            margin-top: 50px;
+            background-color: #f8f9fa;
+            padding: 20px 0;
+            text-align: center;
+            border-radius: 10px;
+        }
+        .team-section {
+            margin: 40px 0;
+        }
+        .timeline {
+            position: relative;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px 0;
+        }
+        .timeline::after {
+            content: '';
+            position: absolute;
+            width: 6px;
+            background-color: #4A90E2;
+            top: 0;
+            bottom: 0;
+            left: 50%;
+            margin-left: -3px;
+            border-radius: 3px;
+        }
+        .milestone {
+            padding: 10px 40px;
+            position: relative;
+            background-color: inherit;
+            width: 50%;
+        }
+        .milestone::after {
+            content: '';
+            position: absolute;
+            width: 25px;
+            height: 25px;
+            right: -13px;
+            background-color: white;
+            border: 4px solid #50E3C2;
+            top: 15px;
+            border-radius: 50%;
+            z-index: 1;
+        }
+        .left {
+            left: 0;
+            text-align: right;
+        }
+        .right {
+            left: 50%;
+        }
+        .left::before {
+            content: " ";
+            height: 0;
+            position: absolute;
+            top: 22px;
+            width: 0;
+            z-index: 1;
+            right: 30px;
+            border: medium solid #f8f9fa;
+            border-width: 10px 0 10px 10px;
+            border-color: transparent transparent transparent #f8f9fa;
+        }
+        .right::before {
+            content: " ";
+            height: 0;
+            position: absolute;
+            top: 22px;
+            width: 0;
+            z-index: 1;
+            left: 30px;
+            border: medium solid #f8f9fa;
+            border-width: 10px 10px 10px 0;
+            border-color: transparent #f8f9fa transparent transparent;
+        }
+        .right::after {
+            left: -12px;
+        }
+        .milestone-content {
+            padding: 20px 30px;
+            background-color: white;
+            position: relative;
+            border-radius: 6px;
+            border: 1px solid #e9ecef;
+        }
+        .milestone-content h4 {
+            color: #4A90E2;
+            margin-top: 0;
+        }
+        .ascii-art {
+            font-family: monospace;
+            white-space: pre;
+            font-size: 10px;
+            line-height: 10px;
+            text-align: center;
+            margin: 20px 0;
+        }
+        .stat-card {
+            border: 1px solid #e9ecef;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            text-align: center;
+            background-color: #f8f9fa;
+        }
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #4A90E2;
+            margin: 10px 0;
+        }
+        .stat-label {
+            font-size: 1.1rem;
+            color: #6c757d;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header text-center">
+            <h1>Dataman</h1>
+            <p class="lead">Advanced Math Problem Solver & Trainer</p>
+        </div>
+
+        <div class="row mb-5">
+            <div class="col-md-6">
+                <div class="ascii-art" style="color: #4A90E2;">
+  _____        _                           
+ |  __ \      | |                          
+ | |  | | __ _| |_ __ _ _ __ ___   __ _ _ __
+ | |  | |/ _` | __/ _` | '_ ` _ \ / _` | '_ \
+ | |__| | (_| | || (_| | | | | | | (_| | | | |
+ |_____/ \__,_|\__\__,_|_| |_| |_|\__,_|_| |_|
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="ascii-art" style="color: #D64541;">
+  _     _ _   _   _        _____            __                          
+ | |   (_) | | | | |      |  __ \          / _|                         
+ | |    _| |_| |_| | ___  | |__) | __ ___ | |_ ___  ___ ___  ___  _ __ 
+ | |   | | __| __| |/ _ \ |  ___/ '__/ _ \|  _/ _ \/ __/ __|/ _ \| '__|
+ | |___| | |_| |_| |  __/ | |   | | | (_) | ||  __/\__ \__ \ (_) | |   
+ |______\_\__|\__|_|\___| |_|   |_|  \___/|_| \___||___/___/\___/|_|   
+                </div>
+            </div>
+        </div>
+
+        <h2>Project Overview</h2>
+        <div class="row">
+            <div class="col-lg-8">
+                <p>
+                    Dataman is a comprehensive math problem solver and trainer application built as part of the CTS285 course for Fall 2022. The project demonstrates modern software architecture with a modular design and multiple interface options, allowing users to practice and improve their math skills.
+                </p>
+                <p>
+                    Inspired by classic educational toys like "Little Professor" and "Dataman," this application brings math practice into the digital age with advanced features like personalized learning, performance tracking, and adaptive difficulty levels.
+                </p>
+            </div>
+            <div class="col-lg-4">
+                <div class="row">
+                    <div class="col-6">
+                        <div class="stat-card">
+                            <div class="stat-number">4</div>
+                            <div class="stat-label">Math Operations</div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="stat-card">
+                            <div class="stat-number">3</div>
+                            <div class="stat-label">Difficulty Levels</div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="stat-card">
+                            <div class="stat-number">2</div>
+                            <div class="stat-label">UI Themes</div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="stat-card">
+                            <div class="stat-number">∞</div>
+                            <div class="stat-label">Practice Problems</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <h2>Key Features</h2>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="feature-box">
+                    <div class="feature-icon">🧮</div>
+                    <h3>Problem Validation</h3>
+                    <p>Instantly check your answers to math problems with comprehensive feedback and detailed solutions.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-box">
+                    <div class="feature-icon">🏆</div>
+                    <h3>Achievement System</h3>
+                    <p>Earn achievements as you improve your math skills and complete challenges, keeping learning fun and engaging.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-box">
+                    <div class="feature-icon">📊</div>
+                    <h3>Performance Tracking</h3>
+                    <p>Comprehensive statistics and visualizations to track your progress over time and identify areas for improvement.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-box">
+                    <div class="feature-icon">⏱️</div>
+                    <h3>Timed Drills</h3>
+                    <p>Test your speed and accuracy with customizable timed drills that adapt to your skill level.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-box">
+                    <div class="feature-icon">📚</div>
+                    <h3>Problem Sets</h3>
+                    <p>Create, save, and practice with collections of math problems organized by topic, difficulty, or your own custom criteria.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-box">
+                    <div class="feature-icon">🎨</div>
+                    <h3>Theme Customization</h3>
+                    <p>Choose between classic Dataman or Little Professor themes to personalize your learning experience.</p>
+                </div>
+            </div>
+        </div>
+
+        <h2>Application Design</h2>
+        <div class="row">
+            <div class="col-md-6">
+                <h3>Core Architecture</h3>
+                <p>Dataman follows a modular design with clear separation of concerns:</p>
+                <ul>
+                    <li><strong>Core Models:</strong> Problem and ProblemSet classes that encapsulate math operations</li>
+                    <li><strong>Storage Interface:</strong> Flexible persistence with JSON and SQLite implementations</li>
+                    <li><strong>Operations:</strong> Business logic for problem management, validation, and statistics</li>
+                    <li><strong>User History:</strong> Comprehensive tracking of user performance and achievements</li>
+                    <li><strong>UI Interfaces:</strong> Multiple interfaces including CLI and Streamlit web app</li>
+                </ul>
+            </div>
+            <div class="col-md-6">
+                <div class="code-snippet">
+tool-dataman/
+├── core/               
+│   ├── models.py       # Data models
+│   ├── storage.py      # Storage interface
+│   ├── storage_sqlite.py  # SQLite implementation
+│   ├── storage_factory.py # Factory pattern
+│   ├── operations.py   # Business logic
+│   ├── user_history.py # User tracking
+│   └── utils.py        # Utility functions
+├── interfaces/
+│   ├── cli/            # Command-line interface
+│   └── streamlit_app/  # Web interface
+│       └── themes/     # UI themes
+├── examples/           # Example scripts
+├── tests/              # Unit tests
+└── docs/               # Documentation
+                </div>
+            </div>
+        </div>
+
+        <h2>User Experience</h2>
+        <div class="row">
+            <div class="col-lg-6">
+                <h3>Themes</h3>
+                <p>Choose between two nostalgic themes that bring back memories of classic educational toys:</p>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="theme-showcase">
+                            <div class="theme-header dataman-theme">Dataman Theme</div>
+                            <div class="theme-content">
+                                <p style="color: #4A90E2;"><strong>Modern blue interface</strong></p>
+                                <p>Features a sleek, digital aesthetic with blue and teal accents on a dark background.</p>
+                                <div style="color: #28a745; font-weight: bold;">✓ Correct!</div>
+                                <div style="color: #dc3545; font-weight: bold;">✗ Incorrect.</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="theme-showcase">
+                            <div class="theme-header little-professor-theme">Little Professor Theme</div>
+                            <div class="theme-content">
+                                <p style="color: #D64541;"><strong>Nostalgic red interface</strong></p>
+                                <p>Reminiscent of the classic toy with warm colors and playful design elements.</p>
+                                <div style="color: #28a745; font-weight: bold;">✓ Correct!</div>
+                                <div style="color: #dc3545; font-weight: bold;">✗ Incorrect.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <h3>User History & Learning</h3>
+                <p>The application provides detailed insights into your learning journey:</p>
+                
+                <div class="row">
+                    <div class="col-md-6 mb-4">
+                        <div class="feature-box" style="height: 100%;">
+                            <h4>Performance Tracking</h4>
+                            <ul>
+                                <li>Statistics by operator</li>
+                                <li>Accuracy tracking</li>
+                                <li>Attempt history</li>
+                                <li>Time performance</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-4">
+                        <div class="feature-box" style="height: 100%;">
+                            <h4>Achievement System</h4>
+                            <ul>
+                                <li>Skill milestones</li>
+                                <li>Completion rewards</li>
+                                <li>Accuracy achievements</li>
+                                <li>Learning progress</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-4">
+                        <div class="feature-box" style="height: 100%;">
+                            <h4>Visualizations</h4>
+                            <ul>
+                                <li>Performance charts</li>
+                                <li>Operator comparisons</li>
+                                <li>Difficulty breakdown</li>
+                                <li>Progress over time</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-4">
+                        <div class="feature-box" style="height: 100%;">
+                            <h4>Learning Suggestions</h4>
+                            <ul>
+                                <li>Personalized recommendations</li>
+                                <li>Difficulty adjustments</li>
+                                <li>Focus area suggestions</li>
+                                <li>Practice recommendations</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <h2>Development Timeline</h2>
+        <div class="timeline">
+            <div class="milestone left">
+                <div class="milestone-content">
+                    <h4>Project Initialization</h4>
+                    <p>Basic project structure and core models established</p>
+                </div>
+            </div>
+            <div class="milestone right">
+                <div class="milestone-content">
+                    <h4>Storage Implementation</h4>
+                    <p>JSON and SQLite storage backends with factory pattern</p>
+                </div>
+            </div>
+            <div class="milestone left">
+                <div class="milestone-content">
+                    <h4>Operations & Logic</h4>
+                    <p>Business logic for problem management and validation</p>
+                </div>
+            </div>
+            <div class="milestone right">
+                <div class="milestone-content">
+                    <h4>User Interfaces</h4>
+                    <p>Command-line interface and Streamlit web application</p>
+                </div>
+            </div>
+            <div class="milestone left">
+                <div class="milestone-content">
+                    <h4>Theme System</h4>
+                    <p>Dataman and Little Professor themes with dynamic styling</p>
+                </div>
+            </div>
+            <div class="milestone right">
+                <div class="milestone-content">
+                    <h4>User History & Achievements</h4>
+                    <p>Comprehensive tracking, statistics, and achievement system</p>
+                </div>
+            </div>
+        </div>
+
+        <h2>Technical Highlights</h2>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="feature-box">
+                    <h3>Factory Pattern</h3>
+                    <p>Uses the factory pattern for creating appropriate storage implementations, allowing for flexible and extensible data persistence.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-box">
+                    <h3>Decorator Pattern</h3>
+                    <p>Implements decorators for history tracking, allowing clean integration of user history with core functionality.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-box">
+                    <h3>Singleton Pattern</h3>
+                    <p>Utilizes the singleton pattern for user history to ensure consistent access to history data throughout the application.</p>
+                </div>
+            </div>
+        </div>
+
+        <h2>Demo & Examples</h2>
+        <div class="row">
+            <div class="col-md-6">
+                <h3>Answer Checker</h3>
+                <div class="code-snippet" style="background-color: #f8f9fa; padding: 15px; border-radius: 5px;">
+# Example of checking a problem
+from dataman.core.models import Problem
+
+# Create a new problem
+problem = Problem(2, "+", 2)
+
+# Check if the answer is correct
+is_correct = problem.check_answer(4)
+print(f"Is 4 the correct answer? {is_correct}")  # True
+
+# Try an incorrect answer
+is_incorrect = problem.check_answer(5)
+print(f"Is 5 the correct answer? {is_incorrect}")  # False
+
+# The actual answer
+print(f"The correct answer is {problem.solve()}")  # 4
+                </div>
+            </div>
+            <div class="col-md-6">
+                <h3>Using Problem Sets</h3>
+                <div class="code-snippet" style="background-color: #f8f9fa; padding: 15px; border-radius: 5px;">
+# Example of creating and using a problem set
+from dataman.core.models import Problem, ProblemSet
+from dataman.core.operations import DatamanOperations
+from dataman.core.storage_factory import StorageFactory
+
+# Create storage with the factory
+storage = StorageFactory.create_storage("json", file_path="problems.json")
+operations = DatamanOperations(storage)
+
+# Generate a random problem set
+problem_set = operations.generate_problem_set(
+    name="Addition Practice",
+    num_problems=5,
+    difficulty="easy",
+    operators=["+"]
+)
+
+# Save the problem set
+operations.save_current_problem_set()
+print(f"Created problem set '{problem_set.name}' with {len(problem_set.problems)} problems")
+                </div>
+            </div>
+        </div>
+
+        <h2>Future Enhancements</h2>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="feature-box">
+                    <h3>More Operations</h3>
+                    <p>Expand beyond basic arithmetic to include fractions, decimals, percentages, and basic algebra.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-box">
+                    <h3>Multi-User Support</h3>
+                    <p>Add user accounts, profiles, and comparative statistics for classroom or family use.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-box">
+                    <h3>Educational Content</h3>
+                    <p>Add explanation cards, learning modules, and step-by-step solution guides for educational value.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="team-section">
+            <h2>Team & Contributors</h2>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="feature-box">
+                        <h3>Project Lead</h3>
+                        <p>Direction and architecture decisions</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-box">
+                        <h3>Claude</h3>
+                        <p>Technical implementation, UI design, history system, and theme development</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-box">
+                        <h3>Development Team</h3>
+                        <p>Testing, quality assurance, and feature enhancements</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>Dataman: Math Problem Solver & Trainer | CTS285 Fall 2022</p>
+            <p><small>Built with modern software architecture and inspired by classic educational toys</small></p>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
