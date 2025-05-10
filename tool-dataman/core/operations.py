@@ -3,28 +3,35 @@
 """
 operations.py - Core operations for Dataman application
 
-This module provides the core business logic and operations for 
+This module provides the core business logic and operations for
 the Dataman application, including problem management and validation.
 """
 import random
+import time
 from typing import Dict, List, Optional, Tuple, Union
 
 from .models import Problem, ProblemSet
 from .storage import StorageInterface
+from .user_history import UserHistorySingleton
+from .history_integration import with_history_tracking, HistoryAwareOperations
 
 
-class DatamanOperations:
+class DatamanOperations(HistoryAwareOperations):
     """Core operations for the Dataman application."""
-    
-    def __init__(self, storage: StorageInterface):
+
+    def __init__(self, storage: StorageInterface, session_id: Optional[str] = None):
         """
         Initialize operations with a storage backend.
-        
+
         Args:
             storage (StorageInterface): Storage implementation for persistence
+            session_id (Optional[str]): Session ID for history tracking
         """
         self.storage = storage
         self.current_problem_set = None
+
+        # Initialize history tracking
+        HistoryAwareOperations.__init__(self, session_id)
     
     def create_problem_set(self, name: str, description: Optional[str] = None) -> ProblemSet:
         """
@@ -119,29 +126,37 @@ class DatamanOperations:
             return []
         return self.current_problem_set.problems
     
+    @with_history_tracking()
     def check_answer(self, problem_index: int, answer: int) -> bool:
         """
         Check if an answer is correct for a specific problem.
-        
+
         Args:
             problem_index (int): Index of the problem
             answer (int): The answer to check
-            
+
         Returns:
             bool: True if the answer is correct, False otherwise
-            
+
         Raises:
             IndexError: If the problem index is out of range
             ValueError: If no current problem set
         """
         if not self.current_problem_set:
             raise ValueError("No problem set loaded")
-        
+
         if problem_index < 0 or problem_index >= len(self.current_problem_set.problems):
             raise IndexError(f"Problem index {problem_index} out of range")
-        
+
+        start_time = time.time()
         problem = self.current_problem_set.problems[problem_index]
-        return problem.check_answer(answer)
+        is_correct = problem.check_answer(answer)
+        time_taken = time.time() - start_time
+
+        # Track the problem attempt
+        self.track_problem(problem, is_correct, time_taken)
+
+        return is_correct
     
     def generate_random_problem(self, 
                                difficulty: str = 'easy',
@@ -225,7 +240,7 @@ class DatamanOperations:
     def get_statistics(self) -> Dict[str, Union[int, float]]:
         """
         Get statistics for the current problem set.
-        
+
         Returns:
             Dict[str, Union[int, float]]: Dictionary with statistics
         """
@@ -237,31 +252,31 @@ class DatamanOperations:
                 "accuracy": 0.0,
                 "by_operator": {}
             }
-        
+
         total = len(self.current_problem_set.problems)
         attempted = sum(1 for p in self.current_problem_set.problems if p.user_answer is not None)
-        correct = sum(1 for p in self.current_problem_set.problems 
+        correct = sum(1 for p in self.current_problem_set.problems
                     if p.user_answer is not None and p.user_answer == p.solve())
-        
+
         # Accuracy percentage
         accuracy = (correct / attempted * 100) if attempted > 0 else 0.0
-        
+
         # Statistics by operator
         by_operator = {}
         for op in Problem.VALID_OPERATORS:
             op_problems = [p for p in self.current_problem_set.problems if p.operator == op]
             op_attempted = sum(1 for p in op_problems if p.user_answer is not None)
-            op_correct = sum(1 for p in op_problems 
+            op_correct = sum(1 for p in op_problems
                            if p.user_answer is not None and p.user_answer == p.solve())
             op_accuracy = (op_correct / op_attempted * 100) if op_attempted > 0 else 0.0
-            
+
             by_operator[op] = {
                 "total": len(op_problems),
                 "attempted": op_attempted,
                 "correct": op_correct,
                 "accuracy": op_accuracy
             }
-        
+
         return {
             "total_problems": total,
             "attempted": attempted,
@@ -269,3 +284,132 @@ class DatamanOperations:
             "accuracy": accuracy,
             "by_operator": by_operator
         }
+
+    def get_user_history_stats(self) -> Dict:
+        """
+        Get comprehensive user history statistics.
+
+        Returns:
+            Dict: User history statistics
+        """
+        # Get problem set stats
+        problem_set_stats = self.get_statistics() if self.current_problem_set else {
+            "total_problems": 0,
+            "attempted": 0,
+            "correct": 0,
+            "accuracy": 0.0,
+            "by_operator": {}
+        }
+
+        # Get user history stats
+        user_stats = self.get_user_stats()
+
+        # Get achievements
+        achievements = self.get_achievements()
+
+        # Get learning suggestions
+        suggestions = self.get_learning_suggestions()
+
+        # Get recent problems
+        recent_problems = self.get_recent_problems(5)
+
+        # Combine everything
+        return {
+            "current_problem_set": problem_set_stats,
+            "user_history": user_stats,
+            "achievements": achievements,
+            "suggestions": suggestions,
+            "recent_problems": recent_problems
+        }
+
+    def run_timed_drill(self,
+                       num_problems: int = 10,
+                       difficulty: str = 'easy',
+                       operators: Optional[List[str]] = None) -> Dict:
+        """
+        Run a timed drill and track the results.
+
+        Args:
+            num_problems (int): Number of problems to include in the drill
+            difficulty (str): Difficulty level ('easy', 'medium', 'hard')
+            operators (Optional[List[str]]): List of operators to include
+
+        Returns:
+            Dict: Results of the drill
+        """
+        # Start a new session
+        session_id = self.user_history.start_session()
+        start_time = time.time()
+
+        # Generate problems
+        problems = []
+        for _ in range(num_problems):
+            problem = self.generate_random_problem(difficulty, operators)
+            problems.append(problem)
+
+        # Initialize results
+        results = {
+            "problems": problems,
+            "answers": [None] * num_problems,
+            "is_correct": [False] * num_problems,
+            "time_taken": 0,
+            "total_correct": 0,
+            "accuracy": 0.0,
+            "session_id": session_id
+        }
+
+        # End the session
+        self.user_history.end_session(session_id)
+
+        return results
+
+    def complete_drill(self, drill_results: Dict, user_answers: List[int]) -> Dict:
+        """
+        Complete a timed drill by checking all answers.
+
+        Args:
+            drill_results (Dict): Drill results from run_timed_drill
+            user_answers (List[int]): List of user answers
+
+        Returns:
+            Dict: Updated drill results
+        """
+        # Get data from drill results
+        problems = drill_results["problems"]
+        session_id = drill_results["session_id"]
+
+        # Start a new session for tracking
+        if not self.session_id:
+            self.session_id = self.user_history.start_session()
+
+        # Check answers and track attempts
+        correct = 0
+        for i, (problem, answer) in enumerate(zip(problems, user_answers)):
+            is_correct = problem.check_answer(answer)
+            if is_correct:
+                correct += 1
+
+            # Track the problem
+            self.user_history.track_problem_attempt(
+                problem_dict=problem.to_dict(),
+                is_correct=is_correct,
+                time_taken=1.0,  # We don't have individual problem times
+                session_id=self.session_id,
+                problem_set_name="Timed Drill",
+                difficulty=drill_results.get("difficulty", "easy")
+            )
+
+            drill_results["answers"][i] = answer
+            drill_results["is_correct"][i] = is_correct
+
+        # Calculate statistics
+        end_time = time.time()
+        drill_results["time_taken"] = end_time - drill_results.get("start_time", end_time - 60)
+        drill_results["total_correct"] = correct
+        drill_results["accuracy"] = (correct / len(problems)) * 100
+
+        # End the session
+        self.user_history.end_session(self.session_id)
+        self.session_id = None
+
+        return drill_results

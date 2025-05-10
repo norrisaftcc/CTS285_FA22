@@ -8,14 +8,28 @@ using Streamlit, allowing users to interact with the application through a brows
 """
 import os
 import time
-from typing import List, Optional, Tuple
+from datetime import datetime
+from typing import List, Optional, Tuple, Dict, Any
 
 import streamlit as st
+import pandas as pd
+import altair as alt
 
 from dataman.core.models import Problem, ProblemSet
 from dataman.core.operations import DatamanOperations
 from dataman.core.storage_factory import StorageFactory
 from dataman.core.utils import format_time, get_default_storage_path
+from dataman.core.user_history import UserHistorySingleton
+
+# Import theme manager
+from themes.theme_manager import (
+    set_theme,
+    display_logo,
+    theme_correct_answer,
+    theme_incorrect_answer,
+    display_achievement_badge,
+    get_theme_colors
+)
 
 
 # Streamlit app configuration
@@ -33,46 +47,84 @@ def initialize_session_state():
         # Use JSON storage by default
         storage_path = get_default_storage_path("json")
         storage = StorageFactory.create_storage("json", file_path=storage_path)
-        st.session_state.operations = DatamanOperations(storage)
-    
+
+        # Initialize user history
+        user_history = UserHistorySingleton.get_instance()
+        session_id = user_history.start_session()
+
+        st.session_state.operations = DatamanOperations(storage, session_id)
+        st.session_state.user_history = user_history
+        st.session_state.session_id = session_id
+
     if "current_problem_index" not in st.session_state:
         st.session_state.current_problem_index = 0
-    
+
     if "drill_problems" not in st.session_state:
         st.session_state.drill_problems = []
-    
+
     if "drill_start_time" not in st.session_state:
         st.session_state.drill_start_time = None
-    
+
     if "drill_answers" not in st.session_state:
         st.session_state.drill_answers = []
-    
+
     if "drill_completed" not in st.session_state:
         st.session_state.drill_completed = False
+
+    # Set default theme if not already set
+    if "theme" not in st.session_state:
+        st.session_state.theme = "dataman"
+        set_theme("dataman")
+
+    # Initialize achievements notification
+    if "show_achievements" not in st.session_state:
+        st.session_state.show_achievements = False
+
+    if "new_achievements" not in st.session_state:
+        st.session_state.new_achievements = []
 
 
 def render_sidebar():
     """Render the sidebar with navigation options."""
+    # Display logo
+    display_logo()
+
     st.sidebar.title("Dataman")
     st.sidebar.subheader("Math Problem Solver & Trainer")
-    
+
     # Navigation
     page = st.sidebar.radio(
         "Navigation",
-        ["Home", "Answer Checker", "Memory Bank", "Problem Sets", "Timed Drill"]
+        ["Home", "Answer Checker", "Memory Bank", "Problem Sets", "Timed Drill", "User History"]
     )
-    
+
     # Show current problem set if loaded
     if st.session_state.operations.current_problem_set:
         st.sidebar.subheader("Current Problem Set")
         st.sidebar.write(f"📚 {st.session_state.operations.current_problem_set.name}")
-        
+
         # Show problem set stats
         stats = st.session_state.operations.get_statistics()
         st.sidebar.write(f"Problems: {stats['total_problems']}")
         if stats['attempted'] > 0:
             st.sidebar.write(f"Accuracy: {stats['accuracy']:.1f}%")
-    
+
+    # Theme selection
+    st.sidebar.subheader("Theme")
+    theme = st.sidebar.radio(
+        "Select Theme",
+        ["Dataman", "Little Professor"],
+        index=0 if st.session_state.theme == "dataman" else 1,
+        key="theme_selector"
+    )
+
+    # Apply theme if changed
+    if (theme == "Dataman" and st.session_state.theme != "dataman") or \
+       (theme == "Little Professor" and st.session_state.theme != "little_professor"):
+        new_theme = "dataman" if theme == "Dataman" else "little_professor"
+        set_theme(new_theme)
+        st.session_state.theme = new_theme
+
     # Storage configuration
     st.sidebar.subheader("Storage Configuration")
     storage_type = st.sidebar.selectbox(
@@ -80,7 +132,7 @@ def render_sidebar():
         ["json", "sqlite"],
         index=0
     )
-    
+
     if storage_type == "json":
         storage_path = st.sidebar.text_input(
             "JSON File Path",
@@ -91,20 +143,41 @@ def render_sidebar():
             "SQLite Database Path",
             value=get_default_storage_path("sqlite")
         )
-    
+
     if st.sidebar.button("Apply Storage Configuration"):
         try:
-            storage = StorageFactory.create_storage(storage_type, 
+            storage = StorageFactory.create_storage(storage_type,
                                                    file_path=storage_path if storage_type == "json" else None,
                                                    db_path=storage_path if storage_type == "sqlite" else None)
-            st.session_state.operations = DatamanOperations(storage)
+            # Preserve session ID
+            session_id = st.session_state.session_id
+            st.session_state.operations = DatamanOperations(storage, session_id)
             st.sidebar.success(f"Storage configuration updated to {storage_type}.")
         except Exception as e:
             st.sidebar.error(f"Error updating storage configuration: {e}")
-    
+
+    # Display achievements if there are new ones
+    if st.session_state.show_achievements and st.session_state.new_achievements:
+        st.sidebar.subheader("🏆 New Achievements!")
+        for achievement in st.session_state.new_achievements:
+            st.sidebar.markdown(f"**{achievement['name']}**: {achievement['description']}")
+
+        if st.sidebar.button("Dismiss"):
+            st.session_state.show_achievements = False
+            st.session_state.new_achievements = []
+
+    # Show latest stats
+    user_stats = st.session_state.operations.get_user_stats()
+    if user_stats and user_stats.get("total_problems_attempted", 0) > 0:
+        st.sidebar.subheader("Your Progress")
+        st.sidebar.write(f"Total Problems: {user_stats['total_problems_attempted']}")
+        if user_stats['total_problems_attempted'] > 0:
+            accuracy = user_stats['total_problems_correct'] / user_stats['total_problems_attempted'] * 100
+            st.sidebar.write(f"Overall Accuracy: {accuracy:.1f}%")
+
     st.sidebar.markdown("---")
     st.sidebar.markdown("© 2023 Dataman")
-    
+
     return page
 
 
@@ -164,19 +237,19 @@ def render_home_page():
 def render_answer_checker():
     """Render the answer checker page."""
     st.title("Answer Checker ✓")
-    
+
     st.markdown("""
     Enter a math problem in the format "2 + 2 = 4" to check if the answer is correct.
     Supported operators: +, -, *, /
     """)
-    
+
     problem_input = st.text_input("Enter math problem (e.g., 2 + 2 = 4)")
-    
+
     if st.button("Check Answer"):
         if not problem_input:
             st.error("Please enter a math problem.")
             return
-        
+
         try:
             parts = problem_input.split()
             first = int(parts[0])
@@ -184,15 +257,42 @@ def render_answer_checker():
             second = int(parts[2])
             # Skip the equals sign
             answer = int(parts[4])
-            
+
             problem = Problem(first, operator, second)
+
+            # Start timing for history tracking
+            start_time = time.time()
             is_correct = problem.check_answer(answer)
-            
+            time_taken = time.time() - start_time
+
+            # Track problem in user history
+            st.session_state.operations.track_problem(
+                problem,
+                is_correct,
+                time_taken
+            )
+
+            # Check for new achievements
+            old_achievements = set(a["id"] for a in st.session_state.user_history.get_achievements())
+
+            # Show result with themed styling
             if is_correct:
-                st.success("Correct! ✓")
+                theme_correct_answer("Correct!")
             else:
-                st.error(f"Incorrect. ✗ The correct answer is {problem.solve()}.")
-            
+                theme_incorrect_answer(f"Incorrect. The correct answer is {problem.solve()}.")
+
+            # Check for new achievements
+            current_achievements = st.session_state.user_history.get_achievements()
+            new_achievements = [a for a in current_achievements if a["id"] not in old_achievements]
+
+            if new_achievements:
+                st.session_state.show_achievements = True
+                st.session_state.new_achievements = new_achievements
+
+                st.success("🏆 You've earned new achievements!")
+                for achievement in new_achievements:
+                    display_achievement_badge(achievement["name"], achievement["description"])
+
             # Option to add to current problem set
             if st.session_state.operations.current_problem_set:
                 if st.button("Add to Current Problem Set"):
@@ -736,14 +836,211 @@ def render_timed_drill():
                 st.experimental_rerun()
 
 
+def render_user_history():
+    """Render the user history page."""
+    st.title("User History 📊")
+
+    # Get user history stats
+    user_stats = st.session_state.operations.get_user_history_stats()
+
+    # User statistics section
+    st.header("Your Math Journey")
+
+    # Overall statistics
+    st.subheader("Overall Performance")
+
+    # Display statistics in columns
+    col1, col2, col3 = st.columns(3)
+
+    with col1:
+        total_problems = user_stats["user_history"]["total_problems_attempted"]
+        st.metric("Total Problems", total_problems)
+
+    with col2:
+        total_correct = user_stats["user_history"]["total_problems_correct"]
+        if total_problems > 0:
+            accuracy = (total_correct / total_problems) * 100
+        else:
+            accuracy = 0
+        st.metric("Total Correct", total_correct)
+
+    with col3:
+        st.metric("Accuracy", f"{accuracy:.1f}%")
+
+    # Performance by operator
+    st.subheader("Performance by Operator")
+
+    # Create data for charts
+    operator_data = []
+    for op, stats in user_stats["user_history"]["by_operator"].items():
+        if stats["attempted"] > 0:
+            operator_data.append({
+                "Operator": op,
+                "Attempted": stats["attempted"],
+                "Correct": stats["correct"],
+                "Accuracy": (stats["correct"] / stats["attempted"]) * 100,
+                "Avg Time": stats["average_time"]
+            })
+
+    if operator_data:
+        df = pd.DataFrame(operator_data)
+
+        # Create charts
+        col1, col2 = st.columns(2)
+
+        with col1:
+            chart = alt.Chart(df).mark_bar().encode(
+                x=alt.X('Operator:N', title='Operator'),
+                y=alt.Y('Attempted:Q', title='Problems'),
+                color=alt.Color('Operator:N', scale=alt.Scale(scheme='category10'))
+            ).properties(
+                title='Problems Attempted by Operator'
+            )
+            st.altair_chart(chart, use_container_width=True)
+
+        with col2:
+            chart = alt.Chart(df).mark_bar().encode(
+                x=alt.X('Operator:N', title='Operator'),
+                y=alt.Y('Accuracy:Q', title='Accuracy (%)'),
+                color=alt.Color('Operator:N', scale=alt.Scale(scheme='category10'))
+            ).properties(
+                title='Accuracy by Operator'
+            )
+            st.altair_chart(chart, use_container_width=True)
+
+        # Display data table
+        st.dataframe(df)
+    else:
+        st.info("No operator data available yet. Complete some problems to see statistics.")
+
+    # Performance by difficulty
+    st.subheader("Performance by Difficulty")
+
+    # Create data for difficulty charts
+    difficulty_data = []
+    for diff, stats in user_stats["user_history"]["by_difficulty"].items():
+        if stats["attempted"] > 0:
+            difficulty_data.append({
+                "Difficulty": diff.capitalize(),
+                "Attempted": stats["attempted"],
+                "Correct": stats["correct"],
+                "Accuracy": (stats["correct"] / stats["attempted"]) * 100,
+                "Avg Time": stats["average_time"]
+            })
+
+    if difficulty_data:
+        df = pd.DataFrame(difficulty_data)
+
+        # Create charts
+        col1, col2 = st.columns(2)
+
+        with col1:
+            chart = alt.Chart(df).mark_bar().encode(
+                x=alt.X('Difficulty:N', title='Difficulty', sort=['Easy', 'Medium', 'Hard']),
+                y=alt.Y('Attempted:Q', title='Problems'),
+                color=alt.Color('Difficulty:N', scale=alt.Scale(scheme='viridis'))
+            ).properties(
+                title='Problems Attempted by Difficulty'
+            )
+            st.altair_chart(chart, use_container_width=True)
+
+        with col2:
+            chart = alt.Chart(df).mark_bar().encode(
+                x=alt.X('Difficulty:N', title='Difficulty', sort=['Easy', 'Medium', 'Hard']),
+                y=alt.Y('Accuracy:Q', title='Accuracy (%)'),
+                color=alt.Color('Difficulty:N', scale=alt.Scale(scheme='viridis'))
+            ).properties(
+                title='Accuracy by Difficulty'
+            )
+            st.altair_chart(chart, use_container_width=True)
+
+        # Display data table
+        st.dataframe(df)
+    else:
+        st.info("No difficulty data available yet. Complete some problems to see statistics.")
+
+    # Achievements section
+    st.header("Your Achievements 🏆")
+
+    achievements = user_stats["achievements"]
+    if achievements:
+        # Display each achievement
+        for achievement in achievements:
+            col1, col2 = st.columns([1, 4])
+
+            with col1:
+                st.markdown("🏆")
+
+            with col2:
+                st.markdown(f"**{achievement['name']}**")
+                st.markdown(f"{achievement['description']}")
+                st.markdown(f"*Earned on {datetime.fromisoformat(achievement['earned_at']).strftime('%B %d, %Y')}*")
+
+            st.markdown("---")
+    else:
+        st.info("No achievements earned yet. Keep practicing to earn achievements!")
+
+    # Learning suggestions
+    st.header("Learning Suggestions 📝")
+
+    suggestions = user_stats["suggestions"]
+
+    # Display operator suggestions
+    if suggestions["operators"]:
+        st.subheader("Operator Suggestions")
+        for suggestion in suggestions["operators"]:
+            st.markdown(f"- {suggestion}")
+
+    # Display difficulty suggestions
+    if suggestions["difficulty"]:
+        st.subheader("Difficulty Level Suggestions")
+        for suggestion in suggestions["difficulty"]:
+            st.markdown(f"- {suggestion}")
+
+    # Display general suggestions
+    if suggestions["general"]:
+        st.subheader("General Suggestions")
+        for suggestion in suggestions["general"]:
+            st.markdown(f"- {suggestion}")
+
+    if not any(suggestions.values()):
+        st.info("Complete more problems to receive personalized learning suggestions.")
+
+    # Recent problems
+    st.header("Recent Problems")
+
+    recent_problems = user_stats["recent_problems"]
+    if recent_problems:
+        # Create data for recent problems table
+        problems_data = []
+        for problem in recent_problems:
+            problem_dict = problem["problem"]
+            problems_data.append({
+                "Problem": f"{problem_dict['first']} {problem_dict['operator']} {problem_dict['second']} = {problem_dict['answer']}",
+                "User Answer": problem_dict.get("user_answer", "Not answered"),
+                "Correct": "✓" if problem["is_correct"] else "✗",
+                "Time": f"{problem['time_taken']:.1f}s",
+                "Date": datetime.fromisoformat(problem["timestamp"]).strftime("%Y-%m-%d %H:%M")
+            })
+
+        # Display recent problems
+        df = pd.DataFrame(problems_data)
+        st.dataframe(df)
+    else:
+        st.info("No recent problems. Start solving problems to see your history.")
+
+
 def main():
     """Main entry point for the Streamlit application."""
     # Initialize session state
     initialize_session_state()
-    
+
+    # Apply current theme
+    set_theme(st.session_state.theme)
+
     # Render sidebar and get selected page
     page = render_sidebar()
-    
+
     # Render selected page
     if page == "Home":
         render_home_page()
@@ -755,6 +1052,8 @@ def main():
         render_problem_sets()
     elif page == "Timed Drill":
         render_timed_drill()
+    elif page == "User History":
+        render_user_history()
 
 
 if __name__ == "__main__":
