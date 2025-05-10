@@ -1,0 +1,3 @@
+"""
+Dataman tests package
+"""
