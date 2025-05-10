@@ -281,6 +281,20 @@
         tr:nth-child(even) {
             background-color: #f2f2f2;
         }
+
+        .fieldtrip-image {
+            border-radius: 8px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+            margin: 1rem 0;
+        }
+
+        .caption {
+            text-align: center;
+            font-style: italic;
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+            color: #666;
+        }
     </style>
 </head>
 <body>
@@ -308,6 +322,12 @@
                     <h2>Project Overview</h2>
                     <p>PokeSense is a comprehensive Pokémon management application designed for Professor Oak's Research Lab. The system allows researchers to search, collect, and analyze Pokémon data through an intuitive interface with direct integration to the PokeAPI.</p>
                     <p>Our application demonstrates a clean separation between GUI, business logic, and data layers while providing a rich user experience for Pokémon enthusiasts and researchers alike.</p>
+                </div>
+
+                <!-- Added the new fieldtrip image here -->
+                <div style="text-align: center; margin-top: 2rem;">
+                    <img src="fieldtrip_with_pokemon.png" alt="Students with a Charizard mascot" class="fieldtrip-image" style="max-width: 500px;">
+                    <p class="caption">Team PokeSense with our dragon-type mascot during field research</p>
                 </div>
             </div>
         </section>
@@ -498,6 +518,12 @@
         <section id="slide6" class="slide">
             <div class="slide-content">
                 <h2>Development Process</h2>
+                
+                <!-- Added field trip image with dragon-type mascot -->
+                <div style="text-align: center; margin-bottom: 2rem;">
+                    <img src="fieldtrip_with_pokemon.png" alt="Team with dragon-type mascot" class="fieldtrip-image" style="max-width: 600px;">
+                    <p class="caption">Our team bonding with a dragon-type mascot during development sprints</p>
+                </div>
                 
                 <div class="card">
                     <h3>Round-Robin Development Approach</h3>
@@ -835,6 +861,8 @@ python pokemvp.py
             <div class="slide-content" style="text-align: center;">
                 <h1 style="font-size: 3rem; margin: 2rem 0;">Thank You!</h1>
                 <p style="font-size: 1.5rem; margin-bottom: 3rem;">Any questions?</p>
+                
+                <img src="fieldtrip_with_pokemon.png" alt="Team PokeSense with dragon mascot" class="fieldtrip-image" style="max-width: 400px; margin-bottom: 2rem;">
                 
                 <div class="card">
                     <h3>Team PokeSense</h3>
